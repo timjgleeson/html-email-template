@@ -154,7 +154,7 @@ ul li {
 </head>
  
 <body bgcolor="#f6f6f6">
-
+    
 <!-- body -->
 <table class="body-wrap">
 	<tr>
@@ -166,16 +166,73 @@ ul li {
 			<table>
 				<tr>
 					<td>
-						<p>Hi there,</p>
-						<p>Sometimes all you want is to send a simple HTML email with a basic design.</p>
-						<h1>Really simple HTML email template</h1>
-						<p>This is a really simple email template. It's sole purpose is to get you to click the button below.</p>
-						<h2>How do I use it?</h2>
-						<p>All the information you need is on GitHub.</p>
-						<p><a href="https://github.com/leemunroe/html-email-template" class="btn-primary">View the source and instructions on GitHub</a></p>
-						<p>Feel free to use, copy, modify this email template as you wish.</p>
-						<p>Thanks, have a lovely day.</p>
-						<p><a href="http://twitter.com/leemunroe">Follow @leemunroe on Twitter</a>
+						<h1>Thank you for your purchase</h1>
+				    <p>Your purchase of <%= @transaction.stack_product_name %> for <%= number_to_currency(@transaction.transaction_amount) %> <small>AUD</small> on Payly was successful.</p>
+				
+				    <% if @transaction.stack_has_digital_download %>
+				      <p><%= link_to 'You can download your file here', download_url(:token => @transaction.transaction_token), :target => "_blank" %>.</p>
+				    <% end %>
+				
+				    <p>Here is your <strong>tax invoice</strong>
+				
+				    <h2><%= @transaction.stack_seller_trading_name %></h2>
+				    <p>ABN: <%= @transaction.stack_seller_abn %></p>
+				    <p>Date: <%= @transaction.created_at.strftime('%-d/%-m/%Y') %></p>
+				    <p>Invoice number: <%= @transaction.transaction_token %></p>
+				
+				    <hr />
+				
+				    <table border="0" width="100%">
+				      <tr>
+				        <td>&nbsp;</td>
+				        <td align="right"><strong>$AUD</strong></td>
+				      </tr>
+				      <tr>
+				        <td><%= @transaction.stack_product_name %></td>
+				        <td align="right"><%= number_to_currency(@transaction.transaction_amount) %></td>
+				      </tr>
+				      <tr>
+				        <td colspan="2">
+				          <hr />
+				        </td>
+				      </tr>
+				      <% if @transaction.stack.has_surcharge? %>
+				        <tr>
+				          <td>Subtotal</td>
+				          <td align="right"><%= number_to_currency( (@transaction.transaction_amount - @transaction.surcharge_cost) ) %></td>
+				        </tr>
+				        <tr>
+				          <td>Surcharge</td>
+				          <td align="right"><%= number_to_currency(@transaction.surcharge_cost) %></td>
+				        </tr>
+				        <tr>
+				          <td colspan="2">
+				            <hr />
+				          </td>
+				        </tr>
+				      <% end %>
+				      <tr>
+				        <td><strong>Total amount payable</strong></td>
+				        <td align="right"><strong><%= number_to_currency(@transaction.transaction_amount) %></strong></td>
+				      </tr>
+				      <tr>
+				        <td colspan="2">
+				          <strong>No GST has been charged.</strong>
+				        </td>
+				      </tr>
+				    </table>
+				
+				    <% if @transaction.stack_require_shipping %>
+				    <p><%= @transaction.stack_product_name %> will be shipped to:</p>
+				    <p><%= @transaction.shipping_full_name %><br />
+				       <%= @transaction.shipping_address_line1 %>, <%= @transaction.shipping_address_line2 %><br />
+				       <%= @transaction.shipping_address_city %> <%= @transaction.shipping_address_state %> <%= @transaction.shipping_address_postcode %><br />
+				       <%= @transaction.shipping_address_country %></p>
+				    <% end %>
+				
+				    <p>If there are any problems, please contact the seller via <%= mail_to @transaction.stack_seller_email, 'email' %>.</p>
+				
+				    <p>Thanks,<br />Payly</p>
 					</td>
 				</tr>
 			</table>
